@@ -1,5 +1,6 @@
 package com.jejukon.strucmod;
 
+import com.jejukon.strucmod.registry.SMStructures;
 import com.jejukon.strucmod.world.structures.ModStructures;
 import com.mojang.logging.LogUtils;
 import net.minecraft.world.level.block.Block;
@@ -15,6 +16,7 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 //import org.slf4j.Logger;
@@ -34,6 +36,14 @@ public class StrucMod {
         ModStructures.register(eventBus);
 
         eventBus.addListener(this::setup);
+
+        DeferredRegister<?>[] registers = {
+                SMStructures.STRUCTURES
+        };
+
+        for (DeferredRegister<?> register : registers){
+            register.register(eventBus);
+        }
 
         MinecraftForge.EVENT_BUS.register(this);
     }

@@ -1,0 +1,10 @@
+{
+  "type": "strucmod:shiverstone",
+  "config": {
+    "start_pool": "strucmod:tp_shiverstone_lamp_well",
+    "size": 1
+  },
+  "biomes": "#strucmod:has_structure/b_shiverstone_lamp_well",
+  "adapt_noise": true,
+  "spawn_overrides": {}
+}
