@@ -5,6 +5,10 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.LevelHeightAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
@@ -80,6 +84,7 @@ public class SkyStructures extends StructureFeature<JigsawConfiguration> {
 
         // Checks to make sure our structure does not spawn within 10 chunks of an Ocean Monument
         // to demonstrate how this method is good for checking extra conditions for spawning
+        //if(Block.getId(1) == context.chunkGenerator().getBaseColumn(1,1, LevelHeightAccessor.create(1,1)).getBlock(65))
         return !context.chunkGenerator().hasFeatureChunkInRange(BuiltinStructureSets.OCEAN_MONUMENTS, context.seed(), chunkpos.x, chunkpos.z, 10);
     }
 
