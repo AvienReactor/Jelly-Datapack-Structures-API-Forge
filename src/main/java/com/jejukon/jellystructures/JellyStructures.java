@@ -1,7 +1,6 @@
 package com.jejukon.jellystructures;
 
-import com.jejukon.jellystructures.registry.SMStructures;
-import com.jejukon.jellystructures.world.structures.ModStructures;
+import com.jejukon.jellystructures.registry.SMTypes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -23,12 +22,10 @@ public class JellyStructures {
     public JellyStructures() {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        ModStructures.register(eventBus);
-
         eventBus.addListener(this::setup);
 
         DeferredRegister<?>[] registers = {
-                SMStructures.STRUCTURES
+                SMTypes.STRUCTURES
         };
 
         for (DeferredRegister<?> register : registers){

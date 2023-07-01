@@ -16,7 +16,7 @@ public class ModHandlers {
         return out_string;
     }
 
-    public static File getBoy(String path, String file_name){
+    public static File getFile(String path, String file_name){
         File directory = new File("");
         directory = new File(directory.getAbsolutePath() + path);
 
@@ -40,7 +40,7 @@ public class ModHandlers {
         return null;
     }
 
-    public static BlockPos reeeblock(BlockState currentBS, BlockPos shiverstonePos, PieceGeneratorSupplier.Context<JigsawConfiguration> shiverstoneContext, String structure_name, int random_y, int max_y, int min_y){
+    public static BlockPos getBlockPos(BlockState currentBS, BlockPos shiverstonePos, PieceGeneratorSupplier.Context<JigsawConfiguration> shiverstoneContext, String structure_name, int random_y, int max_y, int min_y){
         boolean air = currentBS.isAir();
         boolean cleared = false;
         BlockPos tmpPos = null;

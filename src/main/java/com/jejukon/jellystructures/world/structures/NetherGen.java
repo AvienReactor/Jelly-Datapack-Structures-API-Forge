@@ -20,9 +20,9 @@ import org.apache.logging.log4j.Level;
 import java.io.*;
 import java.util.Optional;
 
-public class Shiverstone extends StructureFeature<JigsawConfiguration> {
+public class NetherGen extends StructureFeature<JigsawConfiguration> {
 
-    public Shiverstone(Codec<JigsawConfiguration> codec) {
+    public NetherGen(Codec<JigsawConfiguration> codec) {
         super(codec, (context) -> {
             int min_y = 30;
             int max_y = 100;
@@ -41,7 +41,7 @@ public class Shiverstone extends StructureFeature<JigsawConfiguration> {
             String kubejs_file_name = ModHandlers.getStructorName(structure_location.toString());
             JellyStructures.LOGGER.log(Level.WARN, "Fixed_strucname: {}", kubejs_file_name);
 
-            File dec = ModHandlers.getBoy(("/kubejs/data/" + JellyStructures.MOD_ID + "/additions/" + foldername), kubejs_file_name);
+            File dec = ModHandlers.getFile(("/kubejs/data/" + JellyStructures.MOD_ID + "/additions/" + foldername), kubejs_file_name);
 
             if(dec != null) {
                 try (FileReader fileReader = new FileReader(dec)) {
@@ -63,7 +63,7 @@ public class Shiverstone extends StructureFeature<JigsawConfiguration> {
 
             //region Air check
             BlockState currentBS = shiverstoneContext.chunkGenerator().getBaseColumn(shiverstonePos.getX(),shiverstonePos.getZ(),LevelHeightAccessor.create(min_y,max_y)).getBlock(random_y);
-            shiverstonePos = ModHandlers.reeeblock(currentBS, shiverstonePos, shiverstoneContext, structure_name, random_y,max_y,min_y);
+            shiverstonePos = ModHandlers.getBlockPos(currentBS, shiverstonePos, shiverstoneContext, structure_name, random_y,max_y,min_y);
             //endregion
 
             JellyStructures.LOGGER.log(Level.WARN, "{} final placement at {} /// FINAL", structure_name, shiverstonePos);
