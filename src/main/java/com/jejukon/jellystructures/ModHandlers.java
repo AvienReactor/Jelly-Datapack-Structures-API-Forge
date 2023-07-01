@@ -44,6 +44,10 @@ public class ModHandlers {
                             }
                         }
                     }
+                } else if (folder.isFile()) { //Checks if it's a file
+                    if (folder.getName().equals(file_name + ".json")) { //Check if file name matches
+                        return folder;
+                    }
                 }
             }
         }
