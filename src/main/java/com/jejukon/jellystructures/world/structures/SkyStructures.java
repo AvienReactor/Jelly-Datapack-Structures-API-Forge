@@ -1,16 +1,11 @@
-package com.jejukon.strucmod.world.structures;
+package com.jejukon.jellystructures.world.structures;
 
-import com.jejukon.strucmod.StrucMod;
+import com.jejukon.jellystructures.JellyStructures;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.LevelHeightAccessor;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.GenerationStep;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.JigsawConfiguration;
 import net.minecraft.world.level.levelgen.structure.BuiltinStructureSets;
@@ -129,7 +124,7 @@ public class SkyStructures extends StructureFeature<JigsawConfiguration> {
         if(structurePiecesGenerator.isPresent()) {
             // I use to debug and quickly find out if the structure is spawning or not and where it is.
             // This is returning the coordinates of the center starting piece.
-            StrucMod.LOGGER.log(Level.DEBUG, "Sky Structrues at {}", blockpos);
+            JellyStructures.LOGGER.log(Level.DEBUG, "Sky Structrues at {}", blockpos);
         }
 
         // Return the pieces generator that is now set up so that the game runs it when it needs to create the layout of structure pieces.

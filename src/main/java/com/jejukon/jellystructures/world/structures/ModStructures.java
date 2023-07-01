@@ -1,6 +1,6 @@
-package com.jejukon.strucmod.world.structures;
+package com.jejukon.jellystructures.world.structures;
 
-import com.jejukon.strucmod.StrucMod;
+import com.jejukon.jellystructures.JellyStructures;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -18,7 +18,7 @@ public class ModStructures {
      * is no Deferred Registry system for them.
      */
     public static final DeferredRegister<StructureFeature<?>> DEFERRED_REGISTRY_STRUCTURE =
-            DeferredRegister.create(ForgeRegistries.STRUCTURE_FEATURES, StrucMod.MOD_ID);
+            DeferredRegister.create(ForgeRegistries.STRUCTURE_FEATURES, JellyStructures.MOD_ID);
 
     /**
      * Registers the base structure itself and sets what its path is. In this case,
