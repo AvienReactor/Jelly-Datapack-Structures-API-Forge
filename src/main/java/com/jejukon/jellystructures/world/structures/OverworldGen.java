@@ -1,7 +1,5 @@
 package com.jejukon.jellystructures.world.structures;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.jejukon.jellystructures.JellyStructures;
 import com.jejukon.jellystructures.ModHandlers;
 import com.mojang.serialization.Codec;
@@ -17,17 +15,16 @@ import net.minecraft.world.level.levelgen.structure.pieces.PieceGeneratorSupplie
 import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
 import org.apache.logging.log4j.Level;
 
-import java.io.*;
 import java.util.Optional;
 
-public class NetherGen extends StructureFeature<JigsawConfiguration> {
+public class OverworldGen extends StructureFeature<JigsawConfiguration> {
 
-    public NetherGen(Codec<JigsawConfiguration> codec) {
+    public OverworldGen(Codec<JigsawConfiguration> codec) {
         super(codec, (context) -> {
             int min_y = 30;
             int max_y = 100;
             String structure_name = JellyStructures.MOD_ID;
-            String additions_foldername = "nether";
+            String additions_foldername = "overworld";
 
             JigsawConfiguration jellyConfig = new JigsawConfiguration(context.config().startPool(), 50);
             PieceGeneratorSupplier.Context<JigsawConfiguration> jellyContext = new PieceGeneratorSupplier.Context<>(context.chunkGenerator(), context.biomeSource(), context.seed(), context.chunkPos(), jellyConfig, context.heightAccessor(), context.validBiome(), context.structureManager(), context.registryAccess());

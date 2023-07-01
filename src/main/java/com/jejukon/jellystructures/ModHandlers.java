@@ -1,5 +1,7 @@
 package com.jejukon.jellystructures;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.block.state.BlockState;
@@ -8,6 +10,8 @@ import net.minecraft.world.level.levelgen.structure.pieces.PieceGeneratorSupplie
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class ModHandlers {
     public static String getStructorName(String new_string){
@@ -40,20 +44,46 @@ public class ModHandlers {
         return null;
     }
 
-    public static BlockPos getBlockPos(BlockState currentBS, BlockPos shiverstonePos, PieceGeneratorSupplier.Context<JigsawConfiguration> shiverstoneContext, String structure_name, int random_y, int max_y, int min_y){
+    public static String[] getIntData(String additions_foldername, String kubejs_file_name){
+        int elements = 2;
+        String[] temp = new String[elements];
+        File selected = null;
+
+        selected = getFile(("/kubejs/data/" + JellyStructures.MOD_ID + "/additions/" + additions_foldername), kubejs_file_name);
+
+        if(selected != null) {
+            try (FileReader fileReader = new FileReader(selected)) {
+                JsonObject jsonObject = JsonParser.parseReader(fileReader).getAsJsonObject();
+
+                //Get the info
+                temp[0] = jsonObject.get("min_y").getAsString();
+                temp[1] = jsonObject.get("max_y").getAsString();
+                //temp[2] = jsonObject.get("spawn_in_air").getAsString();
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            JellyStructures.LOGGER.log(Level.ERROR, "File found 2: {}", kubejs_file_name);
+        }
+        
+        return temp;
+    }
+
+    public static BlockPos getBlockPos(BlockState currentBS, BlockPos blockPos, PieceGeneratorSupplier.Context<JigsawConfiguration> context, String structure_name, int random_y, int max_y, int min_y){
         boolean air = currentBS.isAir();
         boolean cleared = false;
         BlockPos tmpPos = null;
+        int fail_y = 130;
 
         if(air){ //Pos is an air block :1
-            tmpPos = shiverstonePos;
-            JellyStructures.LOGGER.log(Level.WARN, "{} AIR at {} /// START", structure_name, shiverstonePos);
+            tmpPos = blockPos;
+            JellyStructures.LOGGER.log(Level.WARN, "{} AIR at {} /// START", structure_name, blockPos);
             int groundCounter = 0; //Used to count amount of solid blocks
             for (int i = random_y; i < max_y; i++){ //Drill up till solid block found :2
-                currentBS = shiverstoneContext.chunkGenerator().getBaseColumn(shiverstonePos.getX(),shiverstonePos.getZ(), LevelHeightAccessor.create(min_y,max_y)).getBlock(i);
+                currentBS = context.chunkGenerator().getBaseColumn(blockPos.getX(),blockPos.getZ(), LevelHeightAccessor.create(min_y,max_y)).getBlock(i);
                 if (groundCounter >= 3 && currentBS.isAir()) { //Drill suitable spot found
                     JellyStructures.LOGGER.log(Level.WARN, "{} suitable spot found /// BUILD", structure_name);
-                    shiverstonePos = new BlockPos(shiverstoneContext.chunkPos().getMiddleBlockX(), i - 1, shiverstoneContext.chunkPos().getMiddleBlockZ());
+                    blockPos = new BlockPos(context.chunkPos().getMiddleBlockX(), i - 1, context.chunkPos().getMiddleBlockZ());
                     break;
                 }
                 if (!currentBS.isAir()){ //Solid block found
@@ -61,7 +91,6 @@ public class ModHandlers {
                 } else { //Air block found
                     groundCounter = 0;
                 }
-                //shiverstonePos = new BlockPos(shiverstoneContext.chunkPos().getMiddleBlockX(), -999, shiverstoneContext.chunkPos().getMiddleBlockZ());
                 JellyStructures.LOGGER.log(Level.WARN, "{} new spot check at Y:{} groundCounter: {} /// SEARCHING", structure_name, i, groundCounter);
             }
         }
@@ -69,9 +98,9 @@ public class ModHandlers {
             JellyStructures.LOGGER.log(Level.WARN, "Failed ground fouind first: {} /// FAILED", structure_name);
         }
 
-        if (tmpPos == shiverstonePos){
-            shiverstonePos = new BlockPos(shiverstonePos.getX(), 130, shiverstonePos.getZ());
+        if (tmpPos == blockPos){ //Failed
+            blockPos = new BlockPos(blockPos.getX(), fail_y, blockPos.getZ());
         }
-        return shiverstonePos;
+        return blockPos;
     }
 }
