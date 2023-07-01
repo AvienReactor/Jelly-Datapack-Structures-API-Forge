@@ -17,14 +17,13 @@ import org.apache.logging.log4j.Level;
 
 import java.util.Optional;
 
-public class UndergardenGen extends StructureFeature<JigsawConfiguration> {
+public class UniversalGen extends StructureFeature<JigsawConfiguration> {
 
-    public UndergardenGen(Codec<JigsawConfiguration> codec) {
+    public UniversalGen(Codec<JigsawConfiguration> codec) {
         super(codec, (context) -> {
             int min_y = 30;
             int max_y = 100;
             String structure_name = JellyStructures.MOD_ID;
-            String additions_foldername = "undergarden";
 
             JigsawConfiguration jellyConfig = new JigsawConfiguration(context.config().startPool(), 50);
             PieceGeneratorSupplier.Context<JigsawConfiguration> jellyContext = new PieceGeneratorSupplier.Context<>(context.chunkGenerator(), context.biomeSource(), context.seed(), context.chunkPos(), jellyConfig, context.heightAccessor(), context.validBiome(), context.structureManager(), context.registryAccess());
@@ -36,12 +35,12 @@ public class UndergardenGen extends StructureFeature<JigsawConfiguration> {
             String kubejs_file_name = ModHandlers.getStructorName(structure_location.toString());
             JellyStructures.LOGGER.log(Level.WARN, "Fixed name: {}", kubejs_file_name);
 
-            String[] data = ModHandlers.getIntData(additions_foldername, kubejs_file_name);
+            String[] data = ModHandlers.getIntData(kubejs_file_name);
 
             //region Data Assigning
             if (data[0] != null) {min_y = Integer.parseInt(data[0]);}
             if (data[1] != null){max_y = Integer.parseInt(data[1]);}
-            //if (data[2] != null){boolean is = Boolean.parseBoolean(data[3]);}
+            //boolean is = Boolean.parseBoolean(data[0]);
             //endregion
             //endregion
 

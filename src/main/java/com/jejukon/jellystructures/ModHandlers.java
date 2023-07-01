@@ -30,13 +30,19 @@ public class ModHandlers {
             JellyStructures.LOGGER.log(Level.ERROR, "Directory not found: {}", directory.toString());
         }
         else {
-            File[] files = directory.listFiles(); //list all content in directory
+            File[] folders = directory.listFiles(); //list all content in directory
 
-            for (File file : files) {
-                JellyStructures.LOGGER.log(Level.ERROR, "File found 1: {}", file);
-                if (file.isFile()) { //Checks if it's a file
-                    if (file.getName().equals(file_name + ".json")) { //Check if file name matches
-                        return file;
+
+            for (File folder : folders) { //Reads each folder in the directory
+                JellyStructures.LOGGER.log(Level.ERROR, "File found 1: {}", folder);
+                if (folder.isDirectory()) {
+                    File[] files = folder.listFiles(); //list all content in folder
+                    for (File file : files) { //Reads each file in folder
+                        if (file.isFile()) { //Checks if it's a file
+                            if (file.getName().equals(file_name + ".json")) { //Check if file name matches
+                                return file;
+                            }
+                        }
                     }
                 }
             }
@@ -44,12 +50,12 @@ public class ModHandlers {
         return null;
     }
 
-    public static String[] getIntData(String additions_foldername, String kubejs_file_name){
+    public static String[] getIntData(String kubejs_file_name){
         int elements = 2;
         String[] temp = new String[elements];
         File selected = null;
 
-        selected = getFile(("/kubejs/data/" + JellyStructures.MOD_ID + "/additions/" + additions_foldername), kubejs_file_name);
+        selected = getFile(("/kubejs/data/" + JellyStructures.MOD_ID + "/additions/"), kubejs_file_name);
 
         if(selected != null) {
             try (FileReader fileReader = new FileReader(selected)) {
@@ -103,4 +109,13 @@ public class ModHandlers {
         }
         return blockPos;
     }
+
+    public static BlockPos blockPosHandler(){
+        BlockPos tempPos = null;
+
+        //Add 3 if statments for each gen type: underground, in air, at exact y
+
+        return tempPos;
+    }
+
 }
