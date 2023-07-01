@@ -1,8 +1,8 @@
 ---
-name: Feature request
+name: Feature request (Non-Dimension)
 about: Suggest an idea for this project
 title: ''
-labels: ''
+labels: Feature Request (Non-Dimension)
 assignees: ''
 
 ---
