@@ -15,7 +15,7 @@ import java.io.IOException;
 
 public class ModHandlers {
     public static String getStructorName(String new_string){
-        String out_string = new_string.substring(12);
+        String out_string = new_string.substring(new_string.indexOf("tp_")+3);
         out_string = ("ad_" + out_string);
         return out_string;
     }
@@ -34,18 +34,19 @@ public class ModHandlers {
 
 
             for (File folder : folders) { //Reads each folder in the directory
-                JellyStructures.LOGGER.log(Level.ERROR, "File found 1: {}", folder);
                 if (folder.isDirectory()) {
                     File[] files = folder.listFiles(); //list all content in folder
                     for (File file : files) { //Reads each file in folder
                         if (file.isFile()) { //Checks if it's a file
                             if (file.getName().equals(file_name + ".json")) { //Check if file name matches
+                                JellyStructures.LOGGER.log(Level.ERROR, "File found: {}", file);
                                 return file;
                             }
                         }
                     }
                 } else if (folder.isFile()) { //Checks if it's a file
                     if (folder.getName().equals(file_name + ".json")) { //Check if file name matches
+                        JellyStructures.LOGGER.log(Level.ERROR, "File found: {}", folder);
                         return folder;
                     }
                 }
@@ -55,7 +56,7 @@ public class ModHandlers {
     }
 
     public static String[] getIntData(String kubejs_file_name){
-        int elements = 2;
+        int elements = 6;
         String[] temp = new String[elements];
         File selected = null;
 
@@ -66,33 +67,35 @@ public class ModHandlers {
                 JsonObject jsonObject = JsonParser.parseReader(fileReader).getAsJsonObject();
 
                 //Get the info
-                temp[0] = jsonObject.get("min_y").getAsString();
+                temp[0] = jsonObject.get("min_y").getAsString();//Ints
                 temp[1] = jsonObject.get("max_y").getAsString();
-                //temp[2] = jsonObject.get("spawn_in_air").getAsString();
+                temp[2] = jsonObject.get("debug_mode").getAsString();
+                //temp[3] = jsonObject.get("out_of_bounds_y").getAsString();
+                temp[4] = jsonObject.get("gen_mode").getAsString();
+                temp[5] = jsonObject.get("exact_y").getAsString();
+                //temp[3] = jsonObject.get("spawn_in_air").getAsString();
 
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            JellyStructures.LOGGER.log(Level.ERROR, "File found 2: {}", kubejs_file_name);
+            //JellyStructures.LOGGER.log(Level.ERROR, "File found 2: {}", kubejs_file_name);
         }
         
         return temp;
     }
 
-    public static BlockPos getBlockPos(BlockState currentBS, BlockPos blockPos, PieceGeneratorSupplier.Context<JigsawConfiguration> context, String structure_name, int random_y, int max_y, int min_y){
+    public static BlockPos getCaveBlockPos(BlockState currentBS, BlockPos blockPos, PieceGeneratorSupplier.Context<JigsawConfiguration> context, String structure_name, int random_y, int max_y, int min_y, int fail_y){
         boolean air = currentBS.isAir();
-        boolean cleared = false;
         BlockPos tmpPos = null;
-        int fail_y = 130;
 
         if(air){ //Pos is an air block :1
             tmpPos = blockPos;
-            JellyStructures.LOGGER.log(Level.WARN, "{} AIR at {} /// START", structure_name, blockPos);
+            //JellyStructures.LOGGER.log(Level.WARN, "{} AIR at {} /// START", structure_name, blockPos); // Dev only
             int groundCounter = 0; //Used to count amount of solid blocks
             for (int i = random_y; i < max_y; i++){ //Drill up till solid block found :2
                 currentBS = context.chunkGenerator().getBaseColumn(blockPos.getX(),blockPos.getZ(), LevelHeightAccessor.create(min_y,max_y)).getBlock(i);
                 if (groundCounter >= 3 && currentBS.isAir()) { //Drill suitable spot found
-                    JellyStructures.LOGGER.log(Level.WARN, "{} suitable spot found /// BUILD", structure_name);
+                    //JellyStructures.LOGGER.log(Level.WARN, "{} suitable spot found /// BUILD", structure_name); // Dev only
                     blockPos = new BlockPos(context.chunkPos().getMiddleBlockX(), i - 1, context.chunkPos().getMiddleBlockZ());
                     break;
                 }
@@ -101,11 +104,11 @@ public class ModHandlers {
                 } else { //Air block found
                     groundCounter = 0;
                 }
-                JellyStructures.LOGGER.log(Level.WARN, "{} new spot check at Y:{} groundCounter: {} /// SEARCHING", structure_name, i, groundCounter);
+                //JellyStructures.LOGGER.log(Level.WARN, "{} new spot check at Y:{} groundCounter: {} /// SEARCHING", structure_name, i, groundCounter); // Dev only
             }
         }
         else {
-            JellyStructures.LOGGER.log(Level.WARN, "Failed ground fouind first: {} /// FAILED", structure_name);
+            //JellyStructures.LOGGER.log(Level.WARN, "Failed ground found first: {} /// FAILED", structure_name); // Dev only
         }
 
         if (tmpPos == blockPos){ //Failed
@@ -114,10 +117,36 @@ public class ModHandlers {
         return blockPos;
     }
 
-    public static BlockPos blockPosHandler(){
+    public static BlockPos getSkyBlockPos(BlockState currentBS, BlockPos blockPos, int random_y, int fail_y){
+        boolean air = currentBS.isAir();
+        BlockPos tmpPos = null;
+
+        blockPos = new BlockPos(blockPos.getX(), random_y, blockPos.getZ());
+
+        if(!air){ //Is solid block
+            blockPos = new BlockPos(blockPos.getX(), fail_y, blockPos.getZ());
+        }
+
+        return blockPos;
+    }
+
+    public static BlockPos getExactBlockPos(BlockState currentBS, BlockPos blockPos, int exact_y, int fail_y){
+        blockPos = new BlockPos(blockPos.getX(), exact_y, blockPos.getZ());
+
+        return blockPos;
+    }
+
+    public static BlockPos genModeHandler(String gen_mode, BlockState currentBS, BlockPos blockPos, PieceGeneratorSupplier.Context<JigsawConfiguration> context, String structure_name, int random_y, int max_y, int min_y, int fail_y, int exact_y){
         BlockPos tempPos = null;
 
-        //Add 3 if statments for each gen type: underground, in air, at exact y
+        //Gen switch
+        switch (gen_mode.toLowerCase()) {
+            case "cave_gen" ->
+                    tempPos = getCaveBlockPos(currentBS, blockPos, context, structure_name, random_y, max_y, min_y, fail_y);
+            case "sky_gen" ->
+                    tempPos = getSkyBlockPos(currentBS, blockPos, random_y, fail_y);
+            case "exact_gen" -> tempPos = getExactBlockPos(currentBS, blockPos, exact_y, fail_y);
+        }
 
         return tempPos;
     }
