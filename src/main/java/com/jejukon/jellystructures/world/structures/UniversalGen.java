@@ -23,7 +23,6 @@ public class UniversalGen extends StructureFeature<JigsawConfiguration> {
         super(codec, (context) -> {
             int min_y = 30;
             int max_y = 100;
-            int fatal_y = (max_y + 20);
             int exact_y = 50;
             boolean debug_mode = false;
             String structure_name = JellyStructures.MOD_ID;
@@ -42,23 +41,17 @@ public class UniversalGen extends StructureFeature<JigsawConfiguration> {
             String[] data = ModHandlers.getIntData(kubejs_file_name);
 
             //region Data Assigning
-
-            //Ints
             if (data[0] != null) {min_y = Integer.parseInt(data[0]);}
             if (data[1] != null){max_y = Integer.parseInt(data[1]);}
-            //if (data[3] != null){fatal_y = Integer.parseInt(data[3]);}
-            if (data[5] != null){exact_y = Integer.parseInt(data[5]);}
-
-            //Booleans
             if (data[2] != null){debug_mode = Boolean.parseBoolean(data[2]);}
-            
-            //Strings
-            if (data[4] !=null){gen_mode = data[4];}
+            if (data[3] !=null){gen_mode = data[3];}
+            if (data[4] != null){exact_y = Integer.parseInt(data[4]);}
             //endregion
             //endregion
 
             if (debug_mode){JellyStructures.LOGGER.log(Level.ERROR, "Additions file found");}
 
+            int fatal_y = (max_y + 20);
             int random_y = (int)Math.floor(Math.random()*(max_y - min_y + 1) + min_y); //Y value
             BlockPos jellyPos = new BlockPos(context.chunkPos().getMiddleBlockX(), random_y, context.chunkPos().getMiddleBlockZ());
 

@@ -17,8 +17,8 @@ public class SMTypes {
 
     //region UniversalType
     static String universalName = "universal";
-    public static final RegistryObject<StructureFeature<JigsawConfiguration>> OVERWORLDSTRUCTS = STRUCTURES.register(universalName, () -> new UniversalGen(JigsawConfiguration.CODEC));
+    public static final RegistryObject<StructureFeature<JigsawConfiguration>> UNIVERSALSTRUCTS = STRUCTURES.register(universalName, () -> new UniversalGen(JigsawConfiguration.CODEC));
 
-    public static final ResourceKey<ConfiguredStructureFeature<?, ?>> OVERWORLDSTRUCTS_KEY = ResourceKey.create(Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY, new ResourceLocation(JellyStructures.MOD_ID, universalName));
+    public static final ResourceKey<ConfiguredStructureFeature<?, ?>> UNIVERSALSTRUCTS_KEY = ResourceKey.create(Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY, new ResourceLocation(JellyStructures.MOD_ID, universalName));
     //endregion
 }

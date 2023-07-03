@@ -56,7 +56,7 @@ public class ModHandlers {
     }
 
     public static String[] getIntData(String kubejs_file_name){
-        int elements = 6;
+        int elements = 5;
         String[] temp = new String[elements];
         File selected = null;
 
@@ -70,9 +70,8 @@ public class ModHandlers {
                 temp[0] = jsonObject.get("min_y").getAsString();//Ints
                 temp[1] = jsonObject.get("max_y").getAsString();
                 temp[2] = jsonObject.get("debug_mode").getAsString();
-                //temp[3] = jsonObject.get("out_of_bounds_y").getAsString();
-                temp[4] = jsonObject.get("gen_mode").getAsString();
-                temp[5] = jsonObject.get("exact_y").getAsString();
+                temp[3] = jsonObject.get("gen_mode").getAsString();
+                temp[4] = jsonObject.get("exact_y").getAsString();
                 //temp[3] = jsonObject.get("spawn_in_air").getAsString();
 
             } catch (IOException e) {
