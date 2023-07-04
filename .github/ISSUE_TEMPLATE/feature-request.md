@@ -7,8 +7,6 @@ assignees: ''
 
 ---
 
-**I have a feature request**
-
 - _General Summary of the feature request:_
 
 - _Additional Details:_
