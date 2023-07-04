@@ -56,7 +56,7 @@ public class ModHandlers {
     }
 
     public static String[] getIntData(String kubejs_file_name){
-        int elements = 5;
+        int elements = 6;
         String[] temp = new String[elements];
         File selected = null;
 
@@ -67,11 +67,12 @@ public class ModHandlers {
                 JsonObject jsonObject = JsonParser.parseReader(fileReader).getAsJsonObject();
 
                 //Get the info
-                temp[0] = jsonObject.get("min_y").getAsString();//Ints
-                temp[1] = jsonObject.get("max_y").getAsString();
-                temp[2] = jsonObject.get("debug_mode").getAsString();
-                temp[3] = jsonObject.get("gen_mode").getAsString();
-                temp[4] = jsonObject.get("exact_y").getAsString();
+                if (jsonObject.has("min_y")){ temp[0] = jsonObject.get("min_y").getAsString();}
+                if (jsonObject.has("max_y")){ temp[1] = jsonObject.get("max_y").getAsString();}
+                if (jsonObject.has("debug_mode")){ temp[2] = jsonObject.get("debug_mode").getAsString();}
+                if (jsonObject.has("gen_mode")){ temp[3] = jsonObject.get("gen_mode").getAsString();}
+                if (jsonObject.has("exact_y")){ temp[4] = jsonObject.get("exact_y").getAsString();}
+                if (jsonObject.has("offset")){ temp[5] = jsonObject.get("offset").getAsString();}
                 //temp[3] = jsonObject.get("spawn_in_air").getAsString();
 
             } catch (IOException e) {
@@ -83,7 +84,7 @@ public class ModHandlers {
         return temp;
     }
 
-    public static BlockPos getCaveBlockPos(BlockState currentBS, BlockPos blockPos, PieceGeneratorSupplier.Context<JigsawConfiguration> context, String structure_name, int random_y, int max_y, int min_y, int fail_y){
+    public static BlockPos getCaveGen(BlockState currentBS, BlockPos blockPos, PieceGeneratorSupplier.Context<JigsawConfiguration> context, String structure_name, int random_y, int max_y, int min_y, int fail_y){
         boolean air = currentBS.isAir();
         BlockPos tmpPos = null;
 
@@ -116,7 +117,7 @@ public class ModHandlers {
         return blockPos;
     }
 
-    public static BlockPos getSkyBlockPos(BlockState currentBS, BlockPos blockPos, int random_y, int fail_y){
+    public static BlockPos getSkyGen(BlockState currentBS, BlockPos blockPos, int random_y, int fail_y){
         boolean air = currentBS.isAir();
         BlockPos tmpPos = null;
 
@@ -129,22 +130,47 @@ public class ModHandlers {
         return blockPos;
     }
 
-    public static BlockPos getExactBlockPos(BlockState currentBS, BlockPos blockPos, int exact_y, int fail_y){
+    public static BlockPos getExactGen(BlockState currentBS, BlockPos blockPos, int exact_y, int fail_y){
         blockPos = new BlockPos(blockPos.getX(), exact_y, blockPos.getZ());
 
         return blockPos;
     }
 
-    public static BlockPos genModeHandler(String gen_mode, BlockState currentBS, BlockPos blockPos, PieceGeneratorSupplier.Context<JigsawConfiguration> context, String structure_name, int random_y, int max_y, int min_y, int fail_y, int exact_y){
+    public static BlockPos getRoofGen(BlockState currentBS, BlockPos blockPos, PieceGeneratorSupplier.Context<JigsawConfiguration> context, int max_y, int min_y, int fail_y, int offset){
+        boolean air = currentBS.isAir();
+        BlockPos tmpPos = null;
+        tmpPos = blockPos;
+
+        int groundCounter = 0; //Used to count amount of solid blocks
+        for (int i = min_y; i < max_y; i++){ //Drill up till solid block found
+            currentBS = context.chunkGenerator().getBaseColumn(blockPos.getX(),blockPos.getZ(), LevelHeightAccessor.create(min_y,max_y)).getBlock(i);
+            if (!currentBS.isAir() && groundCounter < 1) { //Solid block found
+                blockPos = new BlockPos(context.chunkPos().getMiddleBlockX(), i - offset, context.chunkPos().getMiddleBlockZ());
+                groundCounter += 1;
+            }else if (currentBS.isAir()){
+                groundCounter = 0;
+            }
+        }
+        if (tmpPos == blockPos){ //Failed
+            blockPos = new BlockPos(blockPos.getX(), fail_y, blockPos.getZ());
+        }
+
+        return blockPos;
+    }
+
+    public static BlockPos genModeHandler(String gen_mode, BlockState currentBS, BlockPos blockPos, PieceGeneratorSupplier.Context<JigsawConfiguration> context, String structure_name, int random_y, int max_y, int min_y, int fail_y, int exact_y, int offset){
         BlockPos tempPos = null;
 
         //Gen switch
         switch (gen_mode.toLowerCase()) {
             case "cave_gen" ->
-                    tempPos = getCaveBlockPos(currentBS, blockPos, context, structure_name, random_y, max_y, min_y, fail_y);
+                    tempPos = getCaveGen(currentBS, blockPos, context, structure_name, random_y, max_y, min_y, fail_y);
             case "sky_gen" ->
-                    tempPos = getSkyBlockPos(currentBS, blockPos, random_y, fail_y);
-            case "exact_gen" -> tempPos = getExactBlockPos(currentBS, blockPos, exact_y, fail_y);
+                    tempPos = getSkyGen(currentBS, blockPos, random_y, fail_y);
+            case "exact_gen" ->
+                    tempPos = getExactGen(currentBS, blockPos, exact_y, fail_y);
+            case "roof_gen" ->
+                    tempPos = getRoofGen(currentBS, blockPos, context, max_y, min_y, fail_y, offset);
         }
 
         return tempPos;

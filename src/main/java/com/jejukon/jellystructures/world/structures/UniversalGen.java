@@ -24,6 +24,7 @@ public class UniversalGen extends StructureFeature<JigsawConfiguration> {
             int min_y = 30;
             int max_y = 100;
             int exact_y = 50;
+            int offset = 1;
             boolean debug_mode = false;
             String structure_name = JellyStructures.MOD_ID;
             String gen_mode = "cave_gen";
@@ -46,10 +47,21 @@ public class UniversalGen extends StructureFeature<JigsawConfiguration> {
             if (data[2] != null){debug_mode = Boolean.parseBoolean(data[2]);}
             if (data[3] !=null){gen_mode = data[3];}
             if (data[4] != null){exact_y = Integer.parseInt(data[4]);}
+            if (data[5] != null){offset = Integer.parseInt(data[5]);}
             //endregion
             //endregion
 
-            if (debug_mode){JellyStructures.LOGGER.log(Level.ERROR, "Additions file found");}
+
+            //region Debug additions file info
+            if (debug_mode){
+                JellyStructures.LOGGER.log(Level.ERROR, "Additions file found");
+                JellyStructures.LOGGER.log(Level.ERROR, "Min_y = {}", min_y);
+                JellyStructures.LOGGER.log(Level.ERROR, "Max_y = {}", max_y);
+                JellyStructures.LOGGER.log(Level.ERROR, "Gen_mode = {}", gen_mode);
+                JellyStructures.LOGGER.log(Level.ERROR, "Exact_y = {}", exact_y);
+                JellyStructures.LOGGER.log(Level.ERROR, "Offset = {}", offset);
+            }
+            //endregion
 
             int fatal_y = (max_y + 20);
             int random_y = (int)Math.floor(Math.random()*(max_y - min_y + 1) + min_y); //Y value
@@ -57,7 +69,7 @@ public class UniversalGen extends StructureFeature<JigsawConfiguration> {
 
             //region Air check
             BlockState currentBS = jellyContext.chunkGenerator().getBaseColumn(jellyPos.getX(),jellyPos.getZ(),LevelHeightAccessor.create(min_y,max_y)).getBlock(random_y);
-            jellyPos = ModHandlers.genModeHandler(gen_mode, currentBS, jellyPos, jellyContext, structure_name, random_y,max_y,min_y, fatal_y, exact_y);
+            jellyPos = ModHandlers.genModeHandler(gen_mode, currentBS, jellyPos, jellyContext, structure_name, random_y,max_y,min_y, fatal_y, exact_y, offset);
             //endregion
 
             if (debug_mode){JellyStructures.LOGGER.log(Level.WARN, "{} final placement at {} /// FINAL SPOT", structure_name, jellyPos);}
